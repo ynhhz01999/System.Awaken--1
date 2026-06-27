@@ -3,9 +3,9 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private float speed = 6f;
-    [SerializeField] private float normalJumpForce = 10f;   
-    [SerializeField] private float highJumpForce = 16f;    
+    [SerializeField] private float speed = 7f;
+    [SerializeField] private float normalJumpForce = 15f;   
+    [SerializeField] private float highJumpForce = 22f;    
     
     // --- GROUND CHECK VARIABLES ---
     [SerializeField] private Transform groundCheck;      // Titik di kaki player untuk mendeteksi tanah
