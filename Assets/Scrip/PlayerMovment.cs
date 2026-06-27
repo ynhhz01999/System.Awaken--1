@@ -98,3 +98,9 @@ public class PlayerMovement : MonoBehaviour
 
 
 //Skills isu Bro
+//Skills isu Bro
+//Skills isu Bro
+//Skills isu Bro
+//Skills isu Bro
+//Skills isu Bro
+//Skills isu Bro
