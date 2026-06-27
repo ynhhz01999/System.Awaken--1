@@ -7,12 +7,19 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float normalJumpForce = 10f;   
     [SerializeField] private float highJumpForce = 16f;    
     
+    // --- GROUND CHECK VARIABLES ---
+    [SerializeField] private Transform groundCheck;      // Titik di kaki player untuk mendeteksi tanah
+    [SerializeField] private float groundCheckRadius = 0.2f;
+    [SerializeField] private LayerMask groundLayer;      // Layer khusus untuk tanah/platform
+    private bool isGrounded;
+    private bool isChargingJump;                         // Memastikan lompatan dimulai dari tanah
+
     // --- DASH VARIABLES ---
-    [SerializeField] private float dashForce = 25f;       // Speed of the dash
-    [SerializeField] private float dashDuration = 0.2f;    // How long the dash lasts
+    [SerializeField] private float dashForce = 25f;       
+    [SerializeField] private float dashDuration = 0.2f;    
     private float dashTimer;
     private bool isDashing;
-    private float facingDirection = 1f;                    // 1 = Right, -1 = Left
+    private float facingDirection = 1f;                    
 
     private Rigidbody2D body;
     private float spacePressedTime; 
@@ -24,17 +31,18 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        // If we are currently dashing, stop regular movement code and just handle the dash countdown
         if (isDashing)
         {
             dashTimer -= Time.deltaTime;
             if (dashTimer <= 0)
             {
                 isDashing = false;
-                body.gravityScale = 1f; // Restore normal gravity after dash ends
             }
-            return; // Exit update early so movement/jumping keys are ignored while dashing
+            return; 
         }
+
+        // Cek apakah player menyentuh tanah
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
         // --- MOVE RIGHT & LEFT ---
         float moveInput = 0f;
@@ -42,41 +50,48 @@ public class PlayerMovement : MonoBehaviour
         if (Keyboard.current.dKey.isPressed)
         {
             moveInput = 1f;
-            facingDirection = 1f; // Facing Right
+            facingDirection = 1f;
         }
         else if (Keyboard.current.aKey.isPressed)
         {
             moveInput = -1f;
-            facingDirection = -1f; // Facing Left
+            facingDirection = -1f;
         }
 
         body.linearVelocity = new Vector2(moveInput * speed, body.linearVelocity.y);
 
         // --- CHARGED JUMPING ---
-        if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        // Hanya bisa mulai nge-charge kalau sedang di tanah
+        if (isGrounded && Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             spacePressedTime = Time.time; 
+            isChargingJump = true;
         }
 
-        if (Keyboard.current.spaceKey.wasReleasedThisFrame)
+        // Eksekusi lompatan saat tombol dilepas
+        if (Keyboard.current.spaceKey.wasReleasedThisFrame && isChargingJump)
         {
-            float holdDuration = Time.time - spacePressedTime;
+            isChargingJump = false;
 
-            if (holdDuration >= 1f)
+            // Pastikan masih di tanah saat tombol dilepas (mencegah lompat jika jatuh dari tebing saat nge-charge)
+            if (isGrounded)
             {
-                body.linearVelocity = new Vector2(body.linearVelocity.x, highJumpForce);
-            }
-            else
-            {
-                body.linearVelocity = new Vector2(body.linearVelocity.x, normalJumpForce);
+                float holdDuration = Time.time - spacePressedTime;
+
+                if (holdDuration >= 1f)
+                {
+                    body.linearVelocity = new Vector2(body.linearVelocity.x, highJumpForce);
+                }
+                else
+                {
+                    body.linearVelocity = new Vector2(body.linearVelocity.x, normalJumpForce);
+                }
             }
         }
     }
 
-    // --- TRIGGER DETECTION FOR THE DASH OBJECT ---
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Check if the object we hit has the "DashObject" tag
         if (collision.CompareTag("DashObject"))
         {
             StartDash();
@@ -88,19 +103,17 @@ public class PlayerMovement : MonoBehaviour
         isDashing = true;
         dashTimer = dashDuration;
         
-        // Turn off gravity temporarily so the player doesn't fall downwards mid-dash
-        body.gravityScale = 0f; 
-        
-        // Launch the player horizontally in the direction they are facing
-        body.linearVelocity = new Vector2(facingDirection * dashForce, 0f);
+        body.linearVelocity = new Vector2(facingDirection * dashForce, body.linearVelocity.y);
+    }
+
+    // --- BANTUAN VISUAL DI EDITOR ---
+    // Menggambar lingkaran merah di kaki player saat di dalam Unity Editor agar mudah diatur ukurannya
+    private void OnDrawGizmosSelected()
+    {
+        if (groundCheck != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+        }
     }
 }
-
-
-//Skills isu Bro
-//Skills isu Bro
-//Skills isu Bro
-//Skills isu Bro
-//Skills isu Bro
-//Skills isu Bro
-//Skills isu Bro
