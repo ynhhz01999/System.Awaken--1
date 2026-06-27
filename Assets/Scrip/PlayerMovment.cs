@@ -95,3 +95,6 @@ public class PlayerMovement : MonoBehaviour
         body.linearVelocity = new Vector2(facingDirection * dashForce, 0f);
     }
 }
+
+
+//Skills isu Bro
