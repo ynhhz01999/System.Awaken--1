@@ -1,0 +1,14 @@
+{
+    "name": "Unityc505fb5bf897b4f24675.MY.Editor.Tests",
+    "references": [
+        "Unityc505fb5bf897b4f24675.MY.Editor",
+        "Unityc505fb5bf897b4f24675.MY"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": []
+}
