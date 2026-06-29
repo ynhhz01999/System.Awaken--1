@@ -31,6 +31,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        // --- DASH SYSTEM TIMER ---
         if (isDashing)
         {
             dashTimer -= Time.deltaTime;
@@ -73,19 +74,18 @@ public class PlayerMovement : MonoBehaviour
         {
             isChargingJump = false;
 
-            // Pastikan masih di tanah saat tombol dilepas (mencegah lompat jika jatuh dari tebing saat nge-charge)
-            if (isGrounded)
-            {
-                float holdDuration = Time.time - spacePressedTime;
+            // Menghitung berapa lama tombol Space ditahan
+            float holdDuration = Time.time - spacePressedTime;
 
-                if (holdDuration >= 1f)
-                {
-                    body.linearVelocity = new Vector2(body.linearVelocity.x, highJumpForce);
-                }
-                else
-                {
-                    body.linearVelocity = new Vector2(body.linearVelocity.x, normalJumpForce);
-                }
+            if (holdDuration >= 1f)
+            {
+                // High Jump (Lompat Tinggi jika ditahan >= 1 detik)
+                body.linearVelocity = new Vector2(body.linearVelocity.x, highJumpForce);
+            }
+            else
+            {
+                // Normal Jump (Lompat Biasa jika dilepas cepat)
+                body.linearVelocity = new Vector2(body.linearVelocity.x, normalJumpForce);
             }
         }
     }
